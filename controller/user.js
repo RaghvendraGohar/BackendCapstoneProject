@@ -1,6 +1,9 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
-export const registerUser = async (req, res) => {
+import * as jwt from 'jsonwebtoken';
+
+
+export const registerUser = async (req, res,next) => {
     try {
         const { name, password, email, mobile } = req.body;
         if (!name || !password || !email || !mobile) {
@@ -32,14 +35,14 @@ export const registerUser = async (req, res) => {
 
     }
     catch (e) {
-        res.status(500).json({ errorMessage: "error" })
+        next(e);
     }
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res,next) => {
     try {
-        const {  password, email} = req.body;
-        if ( !password || !email) {
+        const { password, email } = req.body;
+        if (!password || !email) {
             return res.status(400).json({
                 errorMessage: "Bad request"
             });
@@ -52,17 +55,22 @@ export const loginUser = async (req, res) => {
         }
 
         const isPasswordMatch = await bcrypt.compare(password, userDetails.password);
-        if(!isPasswordMatch){
+        if (!isPasswordMatch) {
             return res.status(401).json({
                 errorMessage: "Invalid cred"
-            }); 
+            });
         }
+        //
+        const token = jwt.sign({ userID: userDetails._id }, process.env.SECRET_KEY, { expiresIn: "60h" })
+
 
         res.json({
-            message:"User loggedIn"
+            message: "User loggedIn",
+            token: token,
+            name: userDetails.name,
         })
     }
     catch (e) {
-        res.status(500).json({ errorMessage: "error" })
+        next(e);
     }
 }

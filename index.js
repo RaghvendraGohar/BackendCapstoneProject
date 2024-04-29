@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth.js";
+import jobRoutes from "./routes/job.js"
 
 const app = express();
 
@@ -20,6 +21,13 @@ app.get('/health',(req,res)=>{
 }) 
 
 app.use("/api/v1/auth",authRoutes);
+app.use("/api/v1/job",jobRoutes);
+
+app.use((error, req, res, next) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: "Something went wrong!" });
+});
+
 
 mongoose
 .connect(process.env.MONGODB_URI)
