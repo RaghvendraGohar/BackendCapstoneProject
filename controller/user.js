@@ -42,35 +42,45 @@ export const registerUser = async (req, res,next) => {
 export const loginUser = async (req, res,next) => {
     try {
         const { password, email } = req.body;
-        if (!password || !email) {
+        if (!email || !password) {
             return res.status(400).json({
-                errorMessage: "Bad request"
+                errorMessage: "Bad request",
             });
         }
+
         const userDetails = await User.findOne({ email: email });
         if (!userDetails) {
-            return res.status(409).json({
-                message: "User doesn't exist"
-            })
+            return res
+                .status(409)
+                .json({ errorMessage: "User doesn't exists" });
         }
 
-        const isPasswordMatch = await bcrypt.compare(password, userDetails.password);
-        if (!isPasswordMatch) {
-            return res.status(401).json({
-                errorMessage: "Invalid cred"
-            });
-        }
-        //
-        const token = jwt.sign({ userID: userDetails._id }, process.env.SECRET_KEY, { expiresIn: "60h" })
+        const isPasswordMatched = await bcrypt.compare(
+            password,
+            userDetails.password
+        );
 
+        if (!isPasswordMatched) {
+            return res
+                .status(401)
+                .json({ errorMessage: "Invalid credentials" });
+        }
+
+        const token = jwt.default.sign(
+            { userId: userDetails._id },
+            process.env.SECRET_KEY,
+            { expiresIn: "60h" }
+        );
 
         res.json({
-            message: "User loggedIn",
+            message: "User logged in",
             token: token,
+            // userId: userDetails._id,
             name: userDetails.name,
-        })
-    }
-    catch (e) {
-        next(e);
+        });
+    } catch (error) {
+        // console.log(error)
+        // res.status(500).json({errorMessage:"somthing is not wrong!!"})
+       next(error);
     }
 }

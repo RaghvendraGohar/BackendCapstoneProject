@@ -25,7 +25,7 @@ app.use("/api/v1/job",jobRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
-    res.status(500).json({ errorMessage: "Something went wrong!" });
+    res.status(500).json({ errorMessage: "Something wentttttt wrong!" });
 });
 
 
