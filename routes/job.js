@@ -8,9 +8,9 @@ import { getAllJobs } from "../controller/job.js";
 
 
 router.post("/create",verifyToken,createJobPost)
-router.get("/job-details/:jobId",getJobDetailsById);
+router.get("/job-details/:jobId/:userId",getJobDetailsById);
 router.put("/update/:jobId", verifyToken,updateJobDetailsById);
-router.get("/all",getAllJobs);
+router.get("/all/:userId",getAllJobs);
 
 
 

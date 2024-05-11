@@ -75,7 +75,7 @@ export const loginUser = async (req, res,next) => {
         res.json({
             message: "User logged in",
             token: token,
-            // userId: userDetails._id,
+            userId: userDetails._id,
             name: userDetails.name,
         });
     } catch (error) {

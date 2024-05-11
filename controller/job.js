@@ -62,7 +62,7 @@ export const createJobPost = async (req, res, next) => {
 
 export const getJobDetailsById = async (req, res, next) => {
     try {
-        const { jobId } = req.params;
+        const { jobId, userId } = req.params;
         if (!jobId)
             return res.status(400).json({
                 errorMessage: "Bad request",
@@ -76,7 +76,13 @@ export const getJobDetailsById = async (req, res, next) => {
             });
         }
 
-        res.json({ jobDetails });
+        let isEditable = false;
+
+        if (jobDetails.refUserId.toString() === userId) {
+            isEditable = true;
+        }
+
+        res.json({ jobDetails, isEditable: isEditable });
 
     } catch (error) {
         next(error);
@@ -179,8 +185,12 @@ export const getAllJobs = async (req, res, next) => {
                 title: { $regex: searchQuery, $options: "i" },
                 ...filter,
             },
-            { companyName: 1, title: 1, description: 1 }
+            { companyName: 1, title: 1, description: 1,skills:1
+                ,salary:1,location:1,jobType:1
+             }
         );
+
+        
         res.json({ data: jobList });
     } catch (error) {
         next(error);

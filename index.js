@@ -3,12 +3,16 @@ import mongoose from "mongoose";
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth.js";
 import jobRoutes from "./routes/job.js"
+import cors from 'cors';
+
 
 const app = express();
-
+const PORT = 3000;
 dotenv.config();
+app.use(cors());
+  
 
-const PORT = 6000;
+
 app.use(express.json());
 app.get('/health',(req,res)=>{
     console.log("health api");
@@ -25,7 +29,7 @@ app.use("/api/v1/job",jobRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
-    res.status(500).json({ errorMessage: "Something wentttttt wrong!" });
+    res.status(500).json({ errorMessage: "Something went wrong!" });
 });
 
 
